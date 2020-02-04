@@ -1,0 +1,71 @@
+body {
+    margin: 0;
+
+}
+
+.header {
+    text-align: center;
+    padding: 10px;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding-bottom: 204px;
+}
+
+.input-area {
+    margin: 100px 100px 20px 100px;
+}
+
+.hidden {
+    display: none;
+}
+
+.modalWindow.showModal {
+    display: block;
+}
+
+.modalWindow {
+    position: fixed;
+    top: 30%;
+    left: 30%;
+    z-index: 1050;
+    display: none;
+    width: 40%;
+    height: 40%;
+    overflow: hidden;
+    outline: 0;
+}
+
+.error {
+    content: '*Input data are incorrect. Please make sure that JSON written according to the example';
+    color: red;
+}
+
+.table {
+    border: 2px solid gray;
+    max-width: 500px;
+    text-align: center;
+}
+
+.button-menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.button {
+    width: 100px;
+    height: 40px;
+    margin: 10px;
+}
+
+.small-button {
+    width: 50px;
+    height: 40px;
+    margin: 10px;
+}
