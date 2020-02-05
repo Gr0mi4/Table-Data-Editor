@@ -23,26 +23,48 @@
     <h3>Examples :</h3>
     <h5>[{key1:"k1v1",key2:"k2v1",key3:"k3v1"},{key1:"k1v2",key2:"k2v2",key3:"k3v2"}]</h5>
     <h5>[{name:"Name 1",year:"2010"},{name:"Name 2",year:"1997"},{name:"Name 3",year:"2004"}]</h5>
+    <h4>CSV Example</h4>
+    <h5>Title1,Title2,Title3<br>
+        one,two,three<br>
+        example1,example2,example3<br></h5>
 </header>
 <main class="main" id="main">
-    <textarea rows="10" cols="80" id="input-area" class="input-area">[{name:"Name 1",year:"2010"},{name:"Name 2",year:"1997"},{name:"Name 3",year:"2004"}]</textarea>
-    <label class="error hidden" id="input-area-label" for="input-area">*Input data are incorrect. Please make sure that
-        JSON written according to the example</label>
-    <div class="button-menu">
-        <button class="button btn btn-primary" id="continue-button">Продолжить</button>
-        <button class="button btn btn-primary hidden" id="unload-button">Выгрузить</button>
-        <button class="button btn btn-primary hidden" id="edit-button">Изменить</button>
-        <button class="button btn btn-primary hidden" id="add-button">Добавить</button>
-        <button class="button btn btn-primary hidden" id="delete-button">Удалить</button>
+    <form class="radio-form">
+        <div class="custom-control custom-radio">
+            <input type="radio" id="radio-json" name="dataFormat" class="custom-control-input" checked>
+            <label class="custom-control-label" for="radio-json">JSON</label>
+        </div>
+        <div class="custom-control custom-radio">
+            <input type="radio" id="radio-csv" name="dataFormat" class="custom-control-input">
+            <label class="custom-control-label" for="radio-csv">CSV</label>
+        </div>
+    </form>
+    <div class="wrapper">
+        <div class="textarea-wraper">
+            <textarea rows="12" cols="80" id="input-area" class="input-area">[{name:"Name 1",year:"2010"},{name:"Name 2",year:"1997"},{name:"Name 3",year:"2004"}]</textarea>
+            <label class="error hidden" id="input-area-label" for="input-area"></label>
+        </div>
+        <aside class="button-menu">
+            <div class="data buttons">
+                <button class="button btn btn-primary" id="continue-button">Продолжить</button>
+                <button class="button btn btn-primary hidden" id="unload-button">Выгрузить</button>
+            </div>
+            <div class="edit buttons">
+                <button class="button btn btn-primary hidden" id="edit-button">Изменить данные в таблице</button>
+                <button class="button btn btn-primary hidden" id="add-button">Добавить</button>
+                <button class="button btn btn-primary hidden" id="delete-button">Удалить</button>
+                <button class="button btn btn-primary hidden" id="change-row-button">Изменить номер строки</button>
+            </div>
+        </aside>
     </div>
     <!-- Modal -->
-    <div class="modalWindow" id="modalEdit" tabindex="-1">
+    <div class="modalWindow" id="modal-window" tabindex="-1">
         <div>
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                    <h5 class="modal-title" id="modal-title">Modal title</h5>
+                    <button type="button" class="close" id="modal-close-button">
+                        <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -52,35 +74,13 @@
                         <input type="text" id="new-value-field">
                         <button class="button btn btn-secondary" id="submit-new-value">Change</button>
                     </div>
-                    <p>Please select row to change</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modalWindow" id="modalDelete" tabindex="-1">
-        <div>
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Please select row to delete</p>
-                    <div id="chose-deleted-row"></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="modal-overlay hidden" id="modal-overlay"></div>
 </main>
 <script src="main.js"></script>
+<script src="CSVconverter.js"></script>
 </body>
 </html>

@@ -1,67 +1,100 @@
+'use strict';
 const continueButton = document.getElementById('continue-button');
 const unloadButton = document.getElementById('unload-button');
 const editButton = document.getElementById('edit-button');
 const addButton = document.getElementById('add-button');
 const deleteButton = document.getElementById('delete-button');
+const changeRowButton = document.getElementById('change-row-button');
 const inputArea = document.getElementById('input-area');
 const inputLabel = document.getElementById('input-area-label');
 const main = document.getElementById('main');
-const editModal = document.getElementById('modalEdit');
-const deleteModal = document.getElementById('modalDelete');
+const modalWindow = document.getElementById('modal-window');
+const modalOverlay = document.getElementById('modal-overlay');
+const modalCloseButton = document.getElementById('modal-close-button');
+const modalTitle = document.getElementById('modal-title');
+const radioCSV = document.getElementById('radio-csv');
 
-let data;
-let string;
+let tableData;
+let stringData;
 let table;
 let rowNumberHeaderCreated;
 let rowNumber = 0;
+let newRowNumber;
 let objectNumber;
 let keyName;
+let temporaryArray;
+let dataIncorrect;
+let stringDataCSV;
 
-let choseRow = document.getElementById('chose-row');
-let choseDeletedRow = document.getElementById('chose-deleted-row');
-let choseKey = document.getElementById('chose-key');
-let typeNewValue = document.getElementById('type-new-value');
+let choseRowBlock = document.getElementById('chose-row');
+let choseKeyBlock = document.getElementById('chose-key');
+let typeNewValueBlock = document.getElementById('type-new-value');
 let newValueField = document.getElementById('new-value-field');
-let submitNewValue = document.getElementById('submit-new-value');
+let submitNewValueButton = document.getElementById('submit-new-value');
 
 continueButton.onclick = function () {
-    unloadButton.classList.remove('hidden');
-    editButton.classList.remove('hidden');
-    addButton.classList.remove('hidden');
-    deleteButton.classList.remove('hidden');
-
-    string = inputArea.value;
-    let stringIsValid = string.match(/^\[\{.+:".+"\}\]$/ig)? true : false;
-
-    if (!stringIsValid) {
-        inputLabel.classList.remove('hidden');
-    } else if (table !== undefined) {
-        removeTable();
-        inputLabel.classList.add('hidden');
-        let newStr = string.replace(/{\b/gm, "{\"");
-        let newStr2 = newStr.replace(/\b:/gm, "\":");
-        let newStr3 = newStr2.replace(/,\b/gm, ",\"");
-        data = JSON.parse(newStr3);
-        inputArea.value = '';
-        createTable();
-    } else {
-        inputLabel.classList.add('hidden');
-        let newStr = string.replace(/{\b/gm, "{\"");
-        let newStr2 = newStr.replace(/\b:/gm, "\":");
-        let newStr3 = newStr2.replace(/,\b/gm, ",\"");
-        data = JSON.parse(newStr3);
-        inputArea.value = '';
-        createTable();
+    function showEditButtons() {
+        unloadButton.classList.remove('hidden');
+        editButton.classList.remove('hidden');
+        addButton.classList.remove('hidden');
+        deleteButton.classList.remove('hidden');
+        changeRowButton.classList.remove('hidden');
     }
-};
+
+    if (!radioCSV.checked) {
+        inputLabel.innerText = '*Input data are incorrect. Please make sure that JSON written according to the example';
+        stringData = inputArea.value;
+        let stringIsValid = stringData.match(/^\[\{.+:".+"\}\]$/ig) ? true : false;
+        if (!stringIsValid) {
+            inputLabel.classList.remove('hidden');
+        } else {
+            showEditButtons();
+            inputLabel.classList.add('hidden');
+            parseJSON();
+            inputArea.value = '';
+            if (table !== undefined) {
+                removeTable();
+                createTable();
+            } else {
+                createTable()
+            }
+        }
+    } else {
+        inputLabel.innerText = '*Input data are incorrect. Please make sure that CSV written according to the example';
+        stringDataCSV = inputArea.value;
+        let stringIsValid = stringDataCSV.match(/(^.+,.*$\s)+/m) ? true : false;
+        if (!stringIsValid) {
+            inputLabel.classList.remove('hidden');
+        } else {
+            showEditButtons();
+            inputLabel.classList.add('hidden');
+            convertCSV(stringDataCSV);
+            tableData = dataCSV;
+            inputArea.value = '';
+            if (table !== undefined) {
+                removeTable();
+                createTable();
+            } else {
+                createTable();
+            }
+        }
+    }
+}
+
+function parseJSON() {
+    let newStr = stringData.replace(/{\b/gm, "{\"");
+    let newStr2 = newStr.replace(/\b:/gm, "\":");
+    let newStr3 = newStr2.replace(/,\b/gm, ",\"");
+    tableData = JSON.parse(newStr3);
+    return tableData
+}
 
 function createTable() {
     table = document.createElement('table');
     main.append(table);
     table.classList.add('table');
-    for (let i = 0; i <= data.length; i++) {
-        //Вывод заголовков
-        for (let key in data[i]) {
+    for (let i = 0; i <= tableData.length; i++) {
+        for (let key in tableData[i]) {
             if (i === 0) {
                 if (!rowNumberHeaderCreated) {
                     let rowNumberHeader = document.createElement('th');
@@ -78,10 +111,10 @@ function createTable() {
         let tableRow = document.createElement('tr');
         tableRow.innerText = rowNumber;
         rowNumber++;
-        for (let key in data[i]) {
+        for (let key in tableData[i]) {
             let dataSell = document.createElement('td');
             dataSell.classList.add('data-sell');
-            dataSell.innerText = data[i][key];
+            dataSell.innerText = tableData[i][key];
             table.append(tableRow);
             tableRow.append(dataSell);
         }
@@ -95,90 +128,136 @@ function removeTable() {
     rowNumber = 0;
 }
 
-
-
 function editTable() {
-    editModal.classList.add('showModal');
-    for (let i = 0; i < data.length; i++) {
+    modalTitle.innerText = `Chose the row that you want to edit`;
+    showModal();
+    for (let i = 0; i < tableData.length; i++) {
         let rowNumButton = document.createElement('button');
         rowNumButton.classList.add('btn', 'btn-secondary', 'small-button');
-        rowNumButton.onclick = function() {
+        rowNumButton.onclick = function () {
             objectNumber = i;
-            choseRow.classList.add('hidden');
-            choseKey.classList.remove('hidden');
-            for (let key in data[objectNumber]) {
+            choseRowBlock.classList.add('hidden');
+            choseKeyBlock.classList.remove('hidden');
+            for (let key in tableData[objectNumber]) {
+                modalTitle.innerText = 'Chose the key you want to edit';
                 let keyNameButton = document.createElement('button');
-                keyNameButton.classList.add('btn', 'btn-secondary');
+                keyNameButton.classList.add('btn', 'btn-secondary', 'small-button');
                 keyNameButton.onclick = function () {
+                    modalTitle.innerText = 'Chose new value of chosen key';
                     keyName = `${key}`;
-                    choseKey.classList.add('hidden');
-                    typeNewValue.classList.remove('hidden');
-                    newValueField.placeholder = data[objectNumber][keyName];
-                    submitNewValue.onclick = function () {
-                        data[objectNumber][keyName] = newValueField.value;
+                    choseKeyBlock.classList.add('hidden');
+                    typeNewValueBlock.classList.remove('hidden');
+                    newValueField.placeholder = tableData[objectNumber][keyName];
+                    submitNewValueButton.onclick = function () {
+                        tableData[objectNumber][keyName] = newValueField.value;
                         newValueField.value = '';
-                        editModal.classList.remove('showModal');
-                        typeNewValue.classList.add('hidden');
-                        choseKey.classList.add('hidden');
-                        while (choseKey.firstChild) {choseKey.removeChild(choseKey.firstChild)}
-                        choseRow.classList.remove('hidden');
-                        while (choseRow.firstChild) {choseRow.removeChild(choseRow.firstChild)}
+                        closeModal();
                         removeTable();
                         createTable();
                     };
                 };
                 keyNameButton.innerText = key;
-                choseKey.append(keyNameButton);
+                choseKeyBlock.append(keyNameButton);
             }
         };
-        choseRow.append(rowNumButton);
+        choseRowBlock.append(rowNumButton);
         rowNumButton.innerText = `${i}`;
     }
 }
 
-editButton.onclick = editTable;
-deleteButton.onclick = deleteRow;
-addButton.onclick = addNewRow;
-unloadButton.onclick = function () {
-    string = JSON.stringify(data);
-    let newStr = string.replace(/{\"/gm, "{");
-    let newStr2 = newStr.replace(/\":/gm, ":");
-    let newStr3 = newStr2.replace(/,\"/gm, ",");
-    inputArea.value = newStr3;
-};
-
 function addNewRow() {
-    let newObject = {}
-    for (let key in data[0]) {
-        newObject[key] = data[key]
+    let newObject = {};
+    for (let key in tableData[0]) {
+        newObject[key] = tableData[key]
     }
     for (let key in newObject) {
         newObject[key] = prompt('Please enter value of the ' + `${key}`);
+        newObject[key] === null ? dataIncorrect = true : dataIncorrect = false;
     }
-    data.push(newObject);
-    removeTable();
-    createTable();
+    if (!dataIncorrect) {
+        tableData.push(newObject);
+        removeTable();
+        createTable();
+    } else {
+        alert('Введенные данные не соовтествуют шаблону. Попробуйте ещё раз')
+    }
+}
+
+function changeRowNumber() {
+    modalTitle.innerText = 'Chose row number that you want to change';
+    showModal();
+    choseRowBlock.classList.remove('hidden');
+    for (let i = 0; i < tableData.length; i++) {
+        let rowNumButton = document.createElement('button');
+        rowNumButton.classList.add('btn', 'btn-secondary', 'small-button');
+        rowNumButton.onclick = function () {
+            rowNumber = i;
+            temporaryArray = tableData[i];
+            tableData.splice(i, 1);
+            choseRowBlock.classList.add('hidden');
+            typeNewValueBlock.classList.remove('hidden');
+            newValueField.placeholder = rowNumber;
+            submitNewValueButton.onclick = function() {
+                newRowNumber = newValueField.value;
+                tableData[newRowNumber] = temporaryArray;
+                closeModal();
+                removeTable();
+                createTable();
+            };
+        };
+        choseRowBlock.append(rowNumButton);
+        rowNumButton.innerText = `${i}`;
+    }
 }
 
 function deleteRow() {
-    deleteModal.classList.add('showModal');
-    console.log('нажатие есть');
-    for (let i = 0; i < data.length; i++) {
+    modalTitle.innerText = 'Chose row number that you want to delete';
+    showModal();
+    for (let i = 0; i < tableData.length; i++) {
         let rowNumButton = document.createElement('button');
         let rowToDelete;
         rowNumButton.classList.add('btn', 'btn-secondary', 'small-button');
         rowNumButton.innerText = i;
         rowNumButton.onclick = function () {
             rowToDelete = i;
-            data.splice(rowToDelete,1);
-            deleteModal.classList.remove('showModal');
-            while (choseDeletedRow.firstChild) {choseDeletedRow.removeChild(choseDeletedRow.firstChild)}
+            tableData.splice(rowToDelete, 1);
+            closeModal();
             removeTable();
             createTable()
         };
-        choseDeletedRow.append(rowNumButton);
+        choseRowBlock.append(rowNumButton);
     }
 }
 
+function showModal() {
+    modalWindow.classList.add('showModal');
+    modalOverlay.classList.remove('hidden');
+}
 
+function closeModal() {
+    modalWindow.classList.remove('showModal');
+    while (choseKeyBlock.firstChild) {
+        choseKeyBlock.removeChild(choseKeyBlock.firstChild)
+    }
+    choseRowBlock.classList.remove('hidden');
+    while (choseRowBlock.firstChild) {
+        choseRowBlock.removeChild(choseRowBlock.firstChild)
+    }
+    choseKeyBlock.classList.add('hidden');
+    typeNewValueBlock.classList.add('hidden');
+    newValueField.innerText = '';
+    modalOverlay.classList.add('hidden');
+}
 
+editButton.onclick = editTable;
+deleteButton.onclick = deleteRow;
+addButton.onclick = addNewRow;
+modalCloseButton.onclick = closeModal;
+changeRowButton.onclick = changeRowNumber;
+unloadButton.onclick = function () {
+    stringData = JSON.stringify(tableData);
+    let newStr = stringData.replace(/{\"/gm, "{");
+    let newStr2 = newStr.replace(/\":/gm, ":");
+    let newStr3 = newStr2.replace(/,\"/gm, ",");
+    inputArea.value = newStr3;
+};
