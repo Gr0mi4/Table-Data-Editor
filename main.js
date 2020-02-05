@@ -1,11 +1,13 @@
-const downloadButton = document.getElementById('download-button');
-const uploadButton = document.getElementById('upload-button');
+const continueButton = document.getElementById('continue-button');
+const unloadButton = document.getElementById('unload-button');
 const editButton = document.getElementById('edit-button');
 const addButton = document.getElementById('add-button');
+const deleteButton = document.getElementById('delete-button');
 const inputArea = document.getElementById('input-area');
 const inputLabel = document.getElementById('input-area-label');
 const main = document.getElementById('main');
 const editModal = document.getElementById('modalEdit');
+const deleteModal = document.getElementById('modalDelete');
 
 let data;
 let string;
@@ -15,9 +17,22 @@ let rowNumber = 0;
 let objectNumber;
 let keyName;
 
-downloadButton.onclick = function () {
+let choseRow = document.getElementById('chose-row');
+let choseDeletedRow = document.getElementById('chose-deleted-row');
+let choseKey = document.getElementById('chose-key');
+let typeNewValue = document.getElementById('type-new-value');
+let newValueField = document.getElementById('new-value-field');
+let submitNewValue = document.getElementById('submit-new-value');
+
+continueButton.onclick = function () {
+    unloadButton.classList.remove('hidden');
+    editButton.classList.remove('hidden');
+    addButton.classList.remove('hidden');
+    deleteButton.classList.remove('hidden');
+
     string = inputArea.value;
     let stringIsValid = string.match(/^\[\{.+:".+"\}\]$/ig)? true : false;
+
     if (!stringIsValid) {
         inputLabel.classList.remove('hidden');
     } else if (table !== undefined) {
@@ -44,10 +59,8 @@ function createTable() {
     table = document.createElement('table');
     main.append(table);
     table.classList.add('table');
-
     for (let i = 0; i <= data.length; i++) {
         //Вывод заголовков
-
         for (let key in data[i]) {
             if (i === 0) {
                 if (!rowNumberHeaderCreated) {
@@ -82,47 +95,37 @@ function removeTable() {
     rowNumber = 0;
 }
 
-uploadButton.onclick = function () {
-    string = JSON.stringify(data);
-    let newStr = string.replace(/{\"/gm, "{");
-    let newStr2 = newStr.replace(/\":/gm, ":");
-    let newStr3 = newStr2.replace(/,\"/gm, ",");
-    inputArea.value = newStr3;
-};
 
-function edit() {
+
+function editTable() {
     editModal.classList.add('showModal');
-    let choseRow = document.getElementById('chose-row');
-    let choseKey = document.getElementById('chose-key');
-    let typeNewValue = document.getElementById('type-new-value');
-    let newValueField = document.getElementById('new-value-field');
-    let submitNewValue = document.getElementById('submit-new-value');
     for (let i = 0; i < data.length; i++) {
         let rowNumButton = document.createElement('button');
-        rowNumButton.classList.add('btn');
-        rowNumButton.classList.add('btn-secondary');
-        rowNumButton.classList.add('small-button');
+        rowNumButton.classList.add('btn', 'btn-secondary', 'small-button');
         rowNumButton.onclick = function() {
             objectNumber = i;
             choseRow.classList.add('hidden');
             choseKey.classList.remove('hidden');
             for (let key in data[objectNumber]) {
                 let keyNameButton = document.createElement('button');
-                console.log(key);
-                keyNameButton.classList.add('btn');
-                keyNameButton.classList.add('btn-secondary');
-                keyNameButton.classList.add('button');
+                keyNameButton.classList.add('btn', 'btn-secondary');
                 keyNameButton.onclick = function () {
                     keyName = `${key}`;
                     choseKey.classList.add('hidden');
                     typeNewValue.classList.remove('hidden');
+                    newValueField.placeholder = data[objectNumber][keyName];
                     submitNewValue.onclick = function () {
                         data[objectNumber][keyName] = newValueField.value;
+                        newValueField.value = '';
                         editModal.classList.remove('showModal');
+                        typeNewValue.classList.add('hidden');
+                        choseKey.classList.add('hidden');
+                        while (choseKey.firstChild) {choseKey.removeChild(choseKey.firstChild)}
+                        choseRow.classList.remove('hidden');
+                        while (choseRow.firstChild) {choseRow.removeChild(choseRow.firstChild)}
                         removeTable();
                         createTable();
                     };
-
                 };
                 keyNameButton.innerText = key;
                 choseKey.append(keyNameButton);
@@ -133,32 +136,49 @@ function edit() {
     }
 }
 
-editButton.onclick = edit;/*function () {
-    let objectNumber = prompt('Please enter row number to edit', '0');
-    let propertyName = prompt('Please enter name of the property you want edit', `${data[0]}`);
-
-    data[objectNumber][propertyName] = prompt('Please enter new value of chosen property');
-    table.remove();
-    createTable();
-
-};*/
-
-addButton.onclick = function () {
-    let addAnotherOne;
-    let newObject = {};
-
-    function addNewData() {
-        let newObjectKey = prompt('Please enter new key');
-        newObject[newObjectKey] = prompt('Please enter value of the key');
-        addAnotherOne = confirm('Хотите добавить ещё одно значение?');
-    }
-    addNewData();
-    if (addAnotherOne) {
-        addNewData()
-    }
-    if (newObject !== {}) {
-        data.push(newObject)
-    }
-    table.remove();
-    createTable();
+editButton.onclick = editTable;
+deleteButton.onclick = deleteRow;
+addButton.onclick = addNewRow;
+unloadButton.onclick = function () {
+    string = JSON.stringify(data);
+    let newStr = string.replace(/{\"/gm, "{");
+    let newStr2 = newStr.replace(/\":/gm, ":");
+    let newStr3 = newStr2.replace(/,\"/gm, ",");
+    inputArea.value = newStr3;
 };
+
+function addNewRow() {
+    let newObject = {}
+    for (let key in data[0]) {
+        newObject[key] = data[key]
+    }
+    for (let key in newObject) {
+        newObject[key] = prompt('Please enter value of the ' + `${key}`);
+    }
+    data.push(newObject);
+    removeTable();
+    createTable();
+}
+
+function deleteRow() {
+    deleteModal.classList.add('showModal');
+    console.log('нажатие есть');
+    for (let i = 0; i < data.length; i++) {
+        let rowNumButton = document.createElement('button');
+        let rowToDelete;
+        rowNumButton.classList.add('btn', 'btn-secondary', 'small-button');
+        rowNumButton.innerText = i;
+        rowNumButton.onclick = function () {
+            rowToDelete = i;
+            data.splice(rowToDelete,1);
+            deleteModal.classList.remove('showModal');
+            while (choseDeletedRow.firstChild) {choseDeletedRow.removeChild(choseDeletedRow.firstChild)}
+            removeTable();
+            createTable()
+        };
+        choseDeletedRow.append(rowNumButton);
+    }
+}
+
+
+

@@ -29,12 +29,11 @@
     <label class="error hidden" id="input-area-label" for="input-area">*Input data are incorrect. Please make sure that
         JSON written according to the example</label>
     <div class="button-menu">
-        <button class="button btn btn-primary" id="download-button">Download</button>
-        <button class="button btn btn-primary" id="upload-button">Upload</button>
-        <button class="button btn btn-primary" id="edit-button">
-            Edit
-        </button>
-        <button class="button btn btn-primary" id="add-button">Add</button>
+        <button class="button btn btn-primary" id="continue-button">Продолжить</button>
+        <button class="button btn btn-primary hidden" id="unload-button">Выгрузить</button>
+        <button class="button btn btn-primary hidden" id="edit-button">Изменить</button>
+        <button class="button btn btn-primary hidden" id="add-button">Добавить</button>
+        <button class="button btn btn-primary hidden" id="delete-button">Удалить</button>
     </div>
     <!-- Modal -->
     <div class="modalWindow" id="modalEdit" tabindex="-1">
@@ -54,6 +53,26 @@
                         <button class="button btn btn-secondary" id="submit-new-value">Change</button>
                     </div>
                     <p>Please select row to change</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modalWindow" id="modalDelete" tabindex="-1">
+        <div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Please select row to delete</p>
+                    <div id="chose-deleted-row"></div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

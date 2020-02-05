@@ -59,9 +59,12 @@ body {
 }
 
 .button {
-    width: 100px;
     height: 40px;
     margin: 10px;
+}
+
+.button.hidden {
+    display: none;
 }
 
 .small-button {
