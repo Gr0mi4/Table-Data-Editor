@@ -20,13 +20,13 @@
 <body>
 <header class="header">
     <h1>Hello! Please enter your data in the textarea below, according to the example</h1>
-    <h3>Examples :</h3>
-    <h5>[{key1:"k1v1",key2:"k2v1",key3:"k3v1"},{key1:"k1v2",key2:"k2v2",key3:"k3v2"}]</h5>
-    <h5>[{name:"Name 1",year:"2010"},{name:"Name 2",year:"1997"},{name:"Name 3",year:"2004"}]</h5>
-    <h4>CSV Example</h4>
-    <h5>Title1,Title2,Title3<br>
+    <h2>Examples :</h2>
+    <h3>[{key1:"k1v1",key2:"k2v1",key3:"k3v1"},{key1:"k1v2",key2:"k2v2",key3:"k3v2"}]</h3>
+    <h3>[{name:"Name 1",year:"2010"},{name:"Name 2",year:"1997"},{name:"Name 3",year:"2004"}]</h3>
+    <h2>CSV Example</h2>
+    <h3>Title1,Title2,Title3<br>
         one,two,three<br>
-        example1,example2,example3<br></h5>
+        example1,example2,example3<br></h3>
 </header>
 <main class="main" id="main">
     <form class="radio-form">
@@ -41,19 +41,19 @@
     </form>
     <div class="wrapper">
         <div class="textarea-wraper">
-            <textarea rows="12" cols="80" id="input-area" class="input-area">[{name:"Name 1",year:"2010"},{name:"Name 2",year:"1997"},{name:"Name 3",year:"2004"}]</textarea>
+            <textarea rows="12" cols="80" id="input-area" class="input-area"></textarea>
             <label class="error hidden" id="input-area-label" for="input-area"></label>
         </div>
         <aside class="button-menu">
             <div class="data buttons">
-                <button class="button btn btn-primary" id="continue-button">Продолжить</button>
-                <button class="button btn btn-primary hidden" id="unload-button">Выгрузить</button>
+                <button class="button btn btn-primary" id="continue-button">Continue</button>
+                <button class="button btn btn-primary hidden" id="unload-button">Unload</button>
             </div>
             <div class="edit buttons">
-                <button class="button btn btn-primary hidden" id="edit-button">Изменить данные в таблице</button>
-                <button class="button btn btn-primary hidden" id="add-button">Добавить</button>
-                <button class="button btn btn-primary hidden" id="delete-button">Удалить</button>
-                <button class="button btn btn-primary hidden" id="change-row-button">Изменить номер строки</button>
+                <button class="button btn btn-primary hidden" id="edit-button">Edit</button>
+                <button class="button btn btn-primary hidden" id="add-button">Add</button>
+                <button class="button btn btn-primary hidden" id="delete-button">Delete</button>
+                <button class="button btn btn-primary hidden" id="change-row-button">Invert</button>
             </div>
         </aside>
     </div>
@@ -81,6 +81,5 @@
     <div class="modal-overlay hidden" id="modal-overlay"></div>
 </main>
 <script src="main.js"></script>
-<script src="CSVconverter.js"></script>
 </body>
 </html>
