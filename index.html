@@ -41,7 +41,7 @@
     </form>
     <div class="wrapper">
         <div class="textarea-wraper">
-            <textarea rows="12" cols="80" id="input-area" class="input-area"></textarea>
+            <textarea rows="12" cols="80" id="input-area" class="input-area">[{key1:"k1v1",key2:"k2v1",key3:"k3v1"},{key1:"k1v2",key2:"k2v2",key3:"k3v2"}]</textarea>
             <label class="error hidden" id="input-area-label" for="input-area"></label>
         </div>
         <aside class="button-menu">
@@ -80,6 +80,9 @@
     </div>
     <div class="modal-overlay hidden" id="modal-overlay"></div>
 </main>
-<script src="main.js"></script>
+<script src="scripts/drawTable.js"></script>
+<script src="scripts/parsing.js"></script>
+<script src="scripts/modal.js"></script>
+<script src="scripts/main.js"></script>
 </body>
 </html>
